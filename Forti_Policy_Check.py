@@ -44,7 +44,7 @@ def all_objects_sum(every_rule: list):
                 srcdstsrv_list.append("edit " + rule_num)
                 with open(f"All object in Source, Destination and Service fields.txt", "a") as srcdstsrv:
                     srcdstsrv.writelines(l)
-                    # print("edit", rule_num)
+                    # print(rule_num)
             if l.__contains__(objects[0]) and l.__contains__(objects[1]):
                 if not l.__contains__(objects[2]):
                     srcdst_list.append("edit " + rule_num)
