@@ -41,46 +41,46 @@ def all_objects_sum(every_rule: list):
         if objects[3] in l:
             rule_num = l.split(" ")[1].rstrip("\nset")
             if l.__contains__(objects[0]) and l.__contains__(objects[1]) and l.__contains__(objects[2]):
-                srcdstsrv_list.append("edit " + rule_num)
+                srcdstsrv_list.append(rule_num)
                 with open(f"All object in Source, Destination and Service fields.txt", "a") as srcdstsrv:
                     srcdstsrv.writelines(l)
                     # print(rule_num)
             if l.__contains__(objects[0]) and l.__contains__(objects[1]):
                 if not l.__contains__(objects[2]):
-                    srcdst_list.append("edit " + rule_num)
+                    srcdst_list.append(rule_num)
                     with open("All object in Source & Destination fields.txt", "a") as srcdst:
                         srcdst.writelines(l)
                         # print(rule_num)
             if l.__contains__(objects[0]) and  l.__contains__(objects[2]):
                 if not l.__contains__(objects[1]):
-                    srcsrv_list.append("edit " + rule_num)
+                    srcsrv_list.append(rule_num)
                     with open("All object in Source and Service fields.txt", "a") as srcsrv:
                         srcsrv.writelines(l)
                         # print(rule_num)
             if l.__contains__(objects[1]) and l.__contains__(objects[2]):
                 if not l.__contains__(objects[0]):
-                    dstsrv_list.append("edit " + rule_num)
+                    dstsrv_list.append(rule_num)
                     with open("All object in Destination and Service fields.txt", "a") as dstsrv:
                         dstsrv.writelines(l)
                         # print(rule_num)
             if l.__contains__(objects[1]):
                 if not l.__contains__(objects[0]):
                     if not l.__contains__(objects[2]):
-                        dst_list.append("edit " + rule_num)
+                        dst_list.append(rule_num)
                         with open("All object in Destination field.txt", "a") as dst:
                             dst.writelines(l)
                             # print(rule_num)
             if l.__contains__(objects[0]):
                 if not l.__contains__(objects[1]):
                     if not l.__contains__(objects[2]):
-                        src_list.append("edit " + rule_num)
+                        src_list.append(rule_num)
                         with open("All object in Source field.txt", "a") as src:
                             src.writelines(l)
                             # print(rule_num)
             if l.__contains__(objects[2]):
                 if not l.__contains__(objects[0]):
                     if not l.__contains__(objects[1]):
-                        srv_list.append("edit " + rule_num)
+                        srv_list.append(rule_num)
                         with open("All object in Service field.txt", "a") as srv:
                             srv.writelines(l)
                             # print(rule_num)
