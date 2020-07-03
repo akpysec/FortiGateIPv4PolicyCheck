@@ -87,13 +87,13 @@ def all_objects_sum(every_rule: list):
                 # Valuable Network as Source on All Services check
                 if l.__contains__(objects[11] + network) and l.__contains__(objects[2]) and l.__contains__(objects[4]):
                     if not l.__contains__(objects[5]):
-                        if not l.__contains__(objects[5]):
+                        if not l.__contains__(objects[1]):
                             src_vul_net_srv_list[network].append(rule_num)
                             # print(rule_num)
                 # Valuable Network as Destination on All Services check
                 if l.__contains__(objects[12] + network) and l.__contains__(objects[2]) and l.__contains__(objects[4]):
                     if not l.__contains__(objects[5]):
-                        if not l.__contains__(objects[5]):
+                        if not l.__contains__(objects[0]):
                             dst_vul_net_srv_list[network].append(rule_num)
                             # print(rule_num)
 
