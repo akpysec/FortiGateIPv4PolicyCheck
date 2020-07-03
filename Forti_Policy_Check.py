@@ -2,6 +2,8 @@
 # 1) - tab all the config file to 0 point
 # 2) Replace 'edit' word with -> rule\nedit
 # which is just adding new line called 'rule' before the 'edit' line.
+import collections
+
 
 def read_output_list(ipv4_policy: str):
     printing = False
@@ -36,6 +38,10 @@ def all_objects_sum(every_rule: list):
                '"SMB"',
                '"FTP"',
                '"TELNET"',
+               "set srcintf ",
+               "set dstintf ",
+               "set srcaddr ",
+               "set dstaddr "
 ]
 
     srcdstsrv_list = list()
@@ -52,11 +58,44 @@ def all_objects_sum(every_rule: list):
     ftp_list = list()
     telnet_list = list()
 
+    src_vul_net_dstsrv_list = collections.defaultdict(list)
+    dst_vul_net_srcsrv_list = collections.defaultdict(list)
+    src_vul_net_srv_list = collections.defaultdict(list)
+    dst_vul_net_srv_list = collections.defaultdict(list)
+
+    networks_to_check = ['"object-ip-1"',
+                         '"object-ip-2"',
+                         '"object-ip-3"']
+
     for l in sorted(every_rule):
         if objects[3] in l:
-            
+
             # Assign variable to rule ID's
             rule_num = l.split(" ")[1].rstrip("\nset")
+            for network in networks_to_check:
+
+                # Valuable Network as Source to All Destinations and on All Services check
+                if l.__contains__(objects[11] + network) and l.__contains__(objects[1]) and l.__contains__(objects[2]) and l.__contains__(objects[4]):
+                    if not l.__contains__(objects[5]):
+                        src_vul_net_dstsrv_list[network].append(rule_num)
+                        # print(rule_num)
+                # Valuable Network as Destination from All Sources and on All Services check
+                if l.__contains__(objects[12] + network) and l.__contains__(objects[0]) and l.__contains__(objects[2]) and l.__contains__(objects[4]):
+                    if not l.__contains__(objects[5]):
+                        dst_vul_net_srcsrv_list[network].append(rule_num)
+                        # print(rule_num)
+                # Valuable Network as Source on All Services check
+                if l.__contains__(objects[11] + network) and l.__contains__(objects[2]) and l.__contains__(objects[4]):
+                    if not l.__contains__(objects[5]):
+                        if not l.__contains__(objects[5]):
+                            src_vul_net_srv_list[network].append(rule_num)
+                            # print(rule_num)
+                # Valuable Network as Destination on All Services check
+                if l.__contains__(objects[12] + network) and l.__contains__(objects[2]) and l.__contains__(objects[4]):
+                    if not l.__contains__(objects[5]):
+                        if not l.__contains__(objects[5]):
+                            dst_vul_net_srv_list[network].append(rule_num)
+                            # print(rule_num)
 
             # Check for "All" object in Source, Destination and Service fields
             if l.__contains__(objects[0]) and l.__contains__(objects[1]) and l.__contains__(objects[2]) and l.__contains__(objects[4]):
@@ -123,12 +162,12 @@ def all_objects_sum(every_rule: list):
                                 # srv.writelines(l)
                                 # print(rule_num)
 
-            # Check for Disabled policies                    
+            # Check for Disabled policies
             if l.__contains__(objects[5]):
                 disabled_rules_list.append(rule_num)
                 # with open("Disabled rules.txt", "a") as dis:
                 #     dis.writelines(l)
-                
+
             # Check for potentially Un-safe protocols
             if l.__contains__(objects[6]):
                 smb_list.append(rule_num)
@@ -145,7 +184,19 @@ def all_objects_sum(every_rule: list):
                 # with open("Un-safe protocols.txt", "a") as un_safe:
                 #     un_safe.writelines(l)
 
-    with open('Summary.txt', 'a') as summary:        
+                # print(src_vul_net_dstsrv_list.keys
+    print(src_vul_net_dstsrv_list.items())
+    print(dst_vul_net_srcsrv_list.items())
+    print(src_vul_net_srv_list.items())
+    print(dst_vul_net_srv_list.keys())
+
+    with open('Summary.txt', 'a') as summary:
+        summary.write(f"Network: {str(src_vul_net_dstsrv_list.keys()).lstrip('dict_keys([').rstrip('])')} as Source to All Destinations and on All Services\nRules in total: {len(src_vul_net_dstsrv_list.values())}\nRules ID's: {src_vul_net_dstsrv_list.values()}\n\n")
+        summary.write(f"Networks: {str(dst_vul_net_srcsrv_list.keys()).lstrip('dict_keys([').rstrip('])')} as Destination from All Sources and on All Services\nRules in total: {len(dst_vul_net_srcsrv_list.values())}\nRules ID's: {dst_vul_net_srcsrv_list.values()}\n\n")
+        summary.write(f"Networks: {str(src_vul_net_srv_list.keys()).lstrip('dict_keys([').rstrip('])')} as Source on All Services\nRules in total: {len(src_vul_net_srv_list.values())}\nRules ID's: {src_vul_net_srv_list.values()}\n\n")
+        summary.write(f"Network: {str(dst_vul_net_srv_list.keys()).lstrip('dict_keys([').rstrip('])')} as Destinations on All Services\nRules in total: {len(dst_vul_net_srv_list.values())}\nRules ID's: {dst_vul_net_srv_list.values()}\n\n")
+
+
         summary.write(f"All object in Source, Destination & Service fields\nRules in total: {len(srcdstsrv_list)}\nRules ID's: {srcdstsrv_list}\n\n")
         summary.write(f"All object in Source & Destination fields\nRules in total: {len(srcdst_list)}\nRules ID's: {srcdst_list}\n\n")
         summary.write(f"All object in Source & Service fields\nRules in total: {len(srcsrv_list)}\nRules ID's: {srcsrv_list}\n\n")
@@ -153,7 +204,9 @@ def all_objects_sum(every_rule: list):
         summary.write(f"All object in Source field\nRules in total: {len(src_list)}\nRules ID's: {src_list}\n\n")
         summary.write(f"All object in Destination field\nRules in total: {len(dst_list)}\nRules ID's: {dst_list}\n\n")
         summary.write(f"All object in Service field\nRules in total: {len(srv_list)}\nRules ID's: {srv_list}\n\n")
+
         summary.write(f"Disabled Rules\nRules in total: {len(disabled_rules_list)}\nRules ID's: {disabled_rules_list}\n\n")
+
         summary.write(f"SMB presents in rules\nRules in total: {len(smb_list)}\nRules ID's: {smb_list}\n\n")
         summary.write(f"FTP presents in rules\nRules in total: {len(ftp_list)}\nRules ID's: {ftp_list}\n\n")
         summary.write(f"TELNET presents in rules\nRules in total: {len(telnet_list)}\nRules ID's: {telnet_list}\n\n")
